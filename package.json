@@ -1,0 +1,16 @@
+{
+  "name": "decentralized-blockchain",
+  "version": "1.0.0",
+  "description": "Decentralized Blockchain with Mining Process",
+  "main": "blockchain.js",
+  "scripts": {
+    "start": "node blockchain.js",
+    "mine": "node miner.js"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "web3": "^4.3.0"
+  }
+}

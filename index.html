@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decentralized Blockchain App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        #blockchainDisplay {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Decentralized Blockchain App</h1>
+
+    <form id="transactionForm">
+        <label for="sender">Sender:</label>
+        <input type="text" id="sender" name="sender" required>
+
+        <label for="recipient">Recipient:</label>
+        <input type="text" id="recipient" name="recipient" required>
+
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" required>
+
+        <label for="gas">Gas:</label>
+        <input type="number" id="gas" name="gas" required>
+
+        <button type="button" onclick="addTransaction()">Add Transaction</button>
+    </form>
+
+    <button id="mineButton" onclick="mineBlock()">Mine Block</button>
+
+    <div id="blockchainDisplay"></div>
+
+    <script>
+        async function addTransaction() {
+            const sender = document.getElementById('sender').value;
+            const recipient = document.getElementById('recipient').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const gas = parseFloat(document.getElementById('gas').value);
+
+            const transaction = { sender, recipient, amount, gas };
+
+            if (!sender || !recipient || !amount || !gas) {
+            alert('Please fill in all fields before submitting the transaction.');
+            return;
+        }
+
+            try {
+                const response = await fetch('http://nauryzbay:3000/mine', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ transactions: [transaction] }),
+                });
+
+                const result = await response.json();
+
+                if (result.message === 'Block added successfully') {
+                    updateBlockchain();
+                } else {
+                    console.error('Error adding transaction:', result.message);
+                }
+            } catch (error) {
+                console.error('Error adding transaction:', error.message);
+            }
+        }
+
+        async function mineBlock() {
+            try {
+                const response = await fetch('http://nauryzbay:3000/mine', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ transactions: [] }),
+                });
+
+                const result = await response.json();
+
+                if (result.message === 'Block added successfully') {
+                    updateBlockchain();
+                } else {
+                    console.error('Error mining block:', result.message);
+                }
+            } catch (error) {
+                console.error('Error mining block:', error.message);
+            }
+        }
+
+        async function updateBlockchain() {
+            try {
+                const response = await fetch('http://nauryzbay:3000/blocks');
+                const blockchain = await response.json();
+
+                const blockchainDisplay = document.getElementById('blockchainDisplay');
+                blockchainDisplay.textContent = JSON.stringify(blockchain, null, 2);
+            } catch (error) {
+                console.error('Error fetching blockchain:', error.message);
+            }
+        }
+
+        // Initial update when the page loads
+        updateBlockchain();
+    </script>
+</body>
+</html>
